@@ -27,41 +27,39 @@ public class HumanoidModelMixin<T extends LivingEntity> extends AgeableListModel
     @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", at = @At(value = "TAIL"))
     private void animateVRArms(T livingEntity, float f, float g, float h, float i, float j, CallbackInfo ci) {
         if(livingEntity instanceof PlayerExt acc) {
-            if(acc.isXR()) {
-                // Setup left position
-                Pose leftPose = acc.getLeftHandPose();
-                this.leftArm.setPos(
-                        leftPose.getPos().x,
-                        leftPose.getPos().y,
-                        leftPose.getPos().z
-                );
+            // Setup left position
+            Pose leftPose = acc.getLeftHandPose();
+            this.leftArm.setPos(
+                    (float) Math.pow(leftPose.getPos().x - 9f, 2),
+                    (float) Math.pow(leftPose.getPos().y - 87.5f, 2),
+                    (float) Math.pow(leftPose.getPos().z - 7.5f, 2)
+            );
 
-                // Setup left orientation
-                Vector3f leftOrientation = new Vector3f();
-                leftPose.orientation.getEulerAnglesXYZ(leftOrientation);
-                this.leftArm.setRotation(
-                        leftOrientation.x,
-                        leftOrientation.y,
-                        leftOrientation.z
-                );
+            // Setup left orientation
+            Vector3f leftOrientation = new Vector3f();
+            leftPose.orientation.getEulerAnglesXYZ(leftOrientation);
+            this.leftArm.setRotation(
+                    -leftOrientation.z,
+                    -leftOrientation.y,
+                    -leftOrientation.x
+            );
 
-                // Setup right position
-                Pose rightPose = acc.getLeftHandPose();
-                this.rightArm.setPos(
-                        rightPose.getPos().x,
-                        rightPose.getPos().y,
-                        rightPose.getPos().z
-                );
+            // Setup right position
+            Pose rightPose = acc.getRightHandPose();
+            this.rightArm.setPos(
+                    (float) Math.pow(rightPose.getPos().x - 20.5f, 2),
+                    (float) Math.pow(rightPose.getPos().y - 87.5f, 2),
+                    (float) Math.pow(rightPose.getPos().z - 6.5f, 2)
+            );
 
-                // Setup right orientation
-                Vector3f rightOrientation = new Vector3f();
-                rightPose.orientation.getEulerAnglesXYZ(rightOrientation);
-                this.leftArm.setRotation(
-                        rightOrientation.x,
-                        rightOrientation.y,
-                        rightOrientation.z
-                );
-            }
+            // Setup right orientation
+            Vector3f rightOrientation = new Vector3f();
+            rightPose.orientation.getEulerAnglesXYZ(rightOrientation);
+            this.rightArm.setRotation(
+                    rightOrientation.z,
+                    -rightOrientation.y,
+                    rightOrientation.x
+            );
         }
     }
 

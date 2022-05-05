@@ -3,14 +3,19 @@ package net.sorenon.mcxr.core.client;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.sorenon.mcxr.core.MCXRCore;
+import net.sorenon.mcxr.core.Pose;
+import net.sorenon.mcxr.core.accessor.PlayerExt;
 import net.sorenon.mcxr.core.config.MCXRCoreConfigImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class MCXRCoreClient implements ClientModInitializer {
@@ -26,6 +31,25 @@ public class MCXRCoreClient implements ClientModInitializer {
         INSTANCE = this;
 
         playInstalled = FabricLoader.getInstance().isModLoaded("mcxr-play");
+
+        ClientPlayNetworking.registerGlobalReceiver(MCXRCore.POSES, (client, handler, buf, responseSender) -> {
+            var pose1 = new Pose();
+            var pose2 = new Pose();
+            var pose3 = new Pose();
+            pose1.read(buf);
+            pose2.read(buf);
+            pose3.read(buf);
+            UUID uuid = buf.readUUID();
+
+            if(client.level != null) {
+                if(client.level.getPlayerByUUID(uuid) != null) {
+                    PlayerExt acc = (PlayerExt) client.level.getPlayerByUUID(uuid);
+                    acc.getHeadPose().set(pose1);
+                    acc.getLeftHandPose().set(pose2);
+                    acc.getRightHandPose().set(pose3);
+                }
+            }
+        });
 
         ClientLoginNetworking.registerGlobalReceiver(MCXRCore.S2C_CONFIG, (client, handler, bufIn, listenerAdder) -> {
             var buf = PacketByteBufs.create();
