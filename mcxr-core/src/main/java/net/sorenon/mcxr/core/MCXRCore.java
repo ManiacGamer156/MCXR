@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -105,7 +106,9 @@ public class MCXRCore implements ModInitializer {
         if (f != 0) {
             acc.getLeftHandPose().orientation.rotateX(f);
             acc.getRightHandPose().orientation.rotateX(f);
+        }
 
+        if(player.level.isClientSide && player instanceof LocalPlayer) {
             FriendlyByteBuf buf = PacketByteBufs.create();
             acc.getHeadPose().write(buf);
             acc.getLeftHandPose().write(buf);

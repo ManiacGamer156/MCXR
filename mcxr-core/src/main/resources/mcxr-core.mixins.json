@@ -13,7 +13,8 @@
     "hands.ServerPlayerGameModeMixin"
   ],
   "client": [
-    "hands.client.MultiPlayerGameModeMixin"
+    "hands.client.MultiPlayerGameModeMixin",
+    "hands.client.HumanoidModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
